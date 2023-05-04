@@ -1,0 +1,69 @@
+﻿@page
+
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="container auth-container">
+    <div class="col-6 signUp-left">
+        <h1>Welcome Back!</h1>
+        <p>To keep connected with us please login with your personal info</p>
+        <a id="signIn" asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">Sign in</a>
+    </div>
+    <div class="col-6 signUp-right">
+        <form id="registerForm" class="form-container" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+            <h1>Sign Up</h1>
+            <div asp-validation-summary="ModelOnly" class="text-danger register-alert" role="alert"></div>
+
+            <input type="text" asp-for="Input.UserName" autocomplete="username" aria-required="true" placeholder="username" />
+            <span asp-validation-for="Input.UserName" class="text-danger register-alert"></span>
+
+            <input type="text" asp-for="Input.PhoneNumber" pattern="[0]{1}[0-9]{9}" autocomplete="username" aria-required="true" placeholder="0xx-xxx-xxxx" />
+
+            <input type="email" asp-for="Input.Email" autocomplete="username" aria-required="true" placeholder="640xxxxx@kmitl.ac.th" id="EmailCheck" oninput="check()" />
+            <span id="alertEmail" class="text-danger register-alert"></span>
+
+            <input type="password" asp-for="Input.Password" autocomplete="new-password" aria-required="true" placeholder="password" />
+            <span asp-validation-for="Input.Password" class="text-danger register-alert"></span>
+
+            <input type="password" asp-for="Input.ConfirmPassword" autocomplete="new-password" aria-required="true" placeholder="password" />
+            <span asp-validation-for="Input.ConfirmPassword" class="text-danger register-alert"></span>
+
+            <button id="registerSubmit" type="submit" disabled>Register</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const users = ['64010876@kmitl.ac.th', '64010965@kmitl.ac.th', '64010892@kmitl.ac.th', '64010899@kmitl.ac.th', '64010926@kmitl.ac.th', '64010935@kmitl.ac.th',
+                       '64010959@kmitl.ac.th', '64010927@kmitl.ac.th', '64010989@kmitl.ac.th', '64010906@kmitl.ac.th', '64011106@kmitl.ac.th', '64011041@kmitl.ac.th',
+                       '64010956@kmitl.ac.th', '64011028@kmitl.ac.th', '64010936@kmitl.ac.th', '64011013@kmitl.ac.th', '64011148@kmitl.ac.th', '64011299@kmitl.ac.th',
+                       '64011071@kmitl.ac.th', '64010986@kmitl.ac.th', '64011153@kmitl.ac.th', '64010930@kmitl.ac.th', '64010972@kmitl.ac.th', '64011109@kmitl.ac.th',
+                       '64010994@kmitl.ac.th', '64011100@kmitl.ac.th', '64011160@kmitl.ac.th', '64010942@kmitl.ac.th', '64011120@kmitl.ac.th', '64010987@kmitl.ac.th',
+                       '64011258@kmitl.ac.th', '64011018@kmitl.ac.th', '64011011@kmitl.ac.th', '64011154@kmitl.ac.th', '64011289@kmitl.ac.th', '64011210@kmitl.ac.th',
+                       '64011281@kmitl.ac.th', '64010889@kmitl.ac.th', '64011150@kmitl.ac.th', '64010997@kmitl.ac.th', '64011273@kmitl.ac.th', '64011123@kmitl.ac.th',
+                       '64011131@kmitl.ac.th', '64011199@kmitl.ac.th', '64011308@kmitl.ac.th', '64011225@kmitl.ac.th', '64011301@kmitl.ac.th', '64010895@kmitl.ac.th',
+                       '64011113@kmitl.ac.th', '64011204@kmitl.ac.th', '64010971@kmitl.ac.th', '64011264@kmitl.ac.th', '64010893@kmitl.ac.th'
+                   ];
+        
+        let email = document.getElementById("EmailCheck");
+        let alertEmail = document.getElementById("alertEmail");
+        let submitBtn = document.querySelector("#registerSubmit");
+        
+        function check() {
+            if (users.includes(email.value)){
+                alertEmail.innerHTML = "";
+                submitBtn.disabled = false;
+                document.getElementById("registerSubmit").style.cursor = "pointer";
+                
+            }else{
+                submitBtn.disabled = true;
+                document.getElementById("registerSubmit").style.cursor = "not-allowed";
+                alertEmail.innerHTML = "invaid this Email";
+            }
+        }
+    </script>
+}

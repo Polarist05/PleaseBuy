@@ -1,0 +1,130 @@
+﻿@model Cart
+
+@{
+    ViewData["Title"] = "Order";
+    IEnumerable<Canteen> allData = ViewData["allData"] as IEnumerable<Canteen>;
+    IEnumerable<Cart> carts = ViewData["Carts"] as IEnumerable<Cart>;
+    List<String> allRestaurants = ViewData["allRestaurants"] as List<String>;
+    var sum = 0;
+}
+
+<div class="order p-2">
+    <h1 class="text-center">โรงอาหาร @ViewData["Canteen"]</h1>
+    <div class="container choose-container w-100 d-flex justify-content-center gap-3">
+        @foreach (var res in allRestaurants)
+        {
+            <div class="choose">
+                <a href="#@res">@res</a>
+            </div>
+        }
+    </div>
+    <div class="restaurant-container d-flex flex-column">
+        @foreach (var res in allRestaurants)
+        {
+            <div id="@res" class="restaurant-card p-3 d-flex flex-column">
+                <h2>@res</h2>
+                @foreach (var d in allData.Where(r => r.Restaurant == res))
+                {
+                    <form method="POST" asp-controller="Order" asp-action="Add">
+                        <input type="text" asp-for="CartId" name="CartId" value="@ViewData["OrderId"]" hidden />
+                        <input type="text" asp-for="Menu" name="Menu" value="@d.Menu" hidden />
+                        <input type="number" asp-for="Price" name="Price" value="@d.Price" hidden />
+                        <input type="number" asp-for="Amount" name="Amount" value="1" hidden />
+                        <input type="text" asp-for="Owner" name="Owner" value="@ViewData["Owner"]" hidden />
+                        <input type="text" asp-for="Canteen" name="Canteen" value="@ViewData["Canteen"]" hidden />
+                        <input type="text" asp-for="Restaurant" name="Restaurant" value="@d.Restaurant" hidden />
+                        <div class="menu-card p-1">
+                            <div class="menu-img bg-black ">
+                                <img src="https://img.traveltriangle.com/blog/wp-content/uploads/2018/06/belgian-waffles-cover-image.jpg" alt="food"/>
+                            </div>
+                            <div class="menu-detail d-flex flex-column justify-content-between">
+                                <div>
+                                    <h5>@d.Menu</h5>
+                                    <h3>@d.Price</h3>
+                                </div>
+                                <input type="text" asp-for="Annotation" name="Annotation" action="" placeholder="หมายเหตุ" />
+                            </div>
+                            <div class="menu-control d-flex flex-column justify-content-end">
+                                <button type="submit" onclick="AddMenu()">Add to Cart</button>
+                                @*onclick="location.href='@Url.Action("Add", "Order", new {OrderId=ViewData["OrderId"], Menu=d.Menu, Price=d.Price, Amount=1, Annotation=" ", @Owner=ViewData["Owner"], @Canteen=ViewData["Canteen"], @Depositor=ViewData["UserName"]})'"*@
+                            </div>
+                        </div>
+                    </form>
+                }
+            </div>
+        }
+    </div>
+
+    <button id="cart-btn" class="cart-button d-flex justify-content-center align-items-center" onclick="openCart()">
+        <i class="uil uil-shopping-cart"></i>
+        
+    </button>
+    @if (carts.Count() != 0) {<span class="d-flex align-items-center justify-content-center">@carts.Count()</span> }
+
+    <div class="cart-container" id="cart">
+        <div class="" style="background-color:var(--color-primary)">
+            <h3 class="pt-3 ps-3" style="color:white;">MY CART</h3>
+        </div>
+        <div class="my-cart">
+            @if (carts.Count() != 0 ) {
+                @foreach(var item in carts)
+                {
+                    var p = item.Amount * item.Price;
+                    <div class="my-cart-detail">
+                        <div class="title d-flex align-items-center">
+                            <img src="https://i.pinimg.com/originals/fd/80/ec/fd80ecec48eba2a9adb76e4133905879.png" />
+                        </div>
+                        <div class="food pt-1 pb-1 d-flex flex-column">
+                            <p>@item.Amount x @item.Menu</p>
+                            <p style="color:dimgray">@item.Annotation</p>
+                            <a type="submit" class="d-flex align-items-center justify-content-center" asp-controller="Order" asp-action="DeleteMenu" asp-route-id="@item.Id">
+                                <i class="uil uil-trash-alt"></i>
+                                ลบสินค้า
+                            </a>
+                        </div>
+                        <p class="pt-2">฿ @p</p>
+                    </div>
+                    sum += p;
+                }
+            }else
+            {
+                <div class="h-100 d-flex flex-column justify-content-center align-items-center">
+                    <i class="uil uil-search" style="font-size: 3vw"></i>
+                    <p style="text-align:center">YOUR CART IS EMPTY !!</p>
+                </div>
+            }
+        </div>
+        <div class="cart-summarize d-flex flex-column justify-content-center gap-2">
+            <div class="d-flex justify-content-between">
+                <h5>Total Price</h5>
+                <h5>฿ @sum</h5>
+            </div>
+            @if (sum != 0)
+            {
+                <button onclick="location.href='@Url.Action("Index", "Home")'">Order now</button>
+            }else
+            {
+                <button onclick="openCart()">Go to Shopping</button>
+            }
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+
+    let cart = document.getElementById("cart");
+    let cartBtn = document.getElementById("cart-btn");
+
+    function openCart() {
+        if (cart.style.display === "grid"){
+            cartBtn.style.transform = "rotate(0deg)";
+            cart.style.display = "none";
+        } else {
+            cartBtn.style.transform = "rotate(-80deg)";
+            cart.style.display = "grid";
+        }
+    }
+
+</script>
